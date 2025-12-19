@@ -580,16 +580,16 @@
                 type: {type: "datalist", text: "Type", filter: true, defaultOptions: "Movie, Series, Mini-Series, Anthology Series, Documentary, Short Film", clickToCopy: true},
                 language: {type: "datalist", text: "Language", filter: true, defaultOptions: "English, Hindi, Marathi, South, French, Spanish, Tamil, Telugu", clickToCopy: true},
                 series: {type: "input", text: "Series", filter: true, clickToCopy: true},
-                position: {type: "input", text: "# / No.of Seasons", filter: false, styling: "main"},
+                position: {type: "input", text: "# / No.of Seasons"},
                 genre: {type: "datalist", text: "Genre", filter: true, styling: "strong", defaultOptions: "Sci-Fi, Horror, Drama, Super Heros, History, Murder Mystery, Fantasy, Biography, Crime", clickToCopy: true},
                 subGenre: {type: "datalist", text: "Sub-Genre", filter: true, styling: "strong", defaultOptions: "Action, Exploration, Thriller, War, Crime, Romance, Alternate History, Space Opera, Alien Combat, Supernatural", clickToCopy: true},
                 tropes: {type: "input", text: "Tropes", filter: true, clickToCopy: true},
                 year: {type: "input", text: "Year", filter: true},
-                grLink: {type: "link", text: "IMDB", filter: false},
+                grLink: {type: "link", text: "IMDB"},
                 watchPriority: {type: "datalist", text: "Watch Priority", filter: true, styling: "strong", defaultOptions: "-, 1. Highest, 2. High, 3. Medium, 4. Low, 5. After Previous Movies, 0. Watched", clickToCopy: true},
                 watchStatus: {type: "datalist", text: "Watch Status", filter: true, defaultOptions: "-, Watched, Partly Watched, To be watched, Watch From S2, Watch From S6", clickToCopy: true},
                 personalGrades: {type: "datalist", text: "Personal Grades", filter: true, styling: "strong", defaultOptions: "-, A*. Favorites, A. Entertaining, B. Good , C. One Timer, D. Bad", clickToCopy: true},
-                starCasts: {type: "input", text: "Star Casts", filter: true, styling: "main"},
+                starCasts: {type: "input", text: "Star Casts", filter: true},
                 notes: {type: "input", text: "Notes", filter: true, clickToCopy: true}
             };
             
@@ -952,68 +952,6 @@
                 renderDocs(searchTerm);
             });
 
-            /* function populateAddEditPanel(docId = "docId") {
-                let formInnerHtml = `<input type="hidden" id="${docId}">\n`;
-                Object.keys(dataMap).forEach((key) => {
-                    const config = dataMap[key];
-                    if (config.type === "input") {
-                        formInnerHtml += `
-                        <div class="form-group">
-                            <label for="${key}">${config.text}</label>
-                            <input type="text" id="${key}">
-                        </div>\n`;
-                    }
-                    if (config.type === "link") {
-                        formInnerHtml += `
-                        <div class="form-group">
-                            <label for="${key}">${config.text}</label>
-                            <input type="url" id="${key}">
-                        </div>\n`;
-                    }
-                    if (config.type === "datalist" || config.type === "select") {
-                        let options = config.defaultOptions.split(",").map((s) => s.trim());
-                        //console.log(options);
-                        let optionsHtml = "";
-                        options.forEach((option) => {
-                            //console.log(option);
-                            optionsHtml += `
-                            <option value="${option}">${option}</option>\n`;
-                        });
-                        formInnerHtml += `
-                        <div class="form-group">
-                            <label for="${key}">${config.text}</label>
-                            <input type="text" id="${key}" list="${key}List" class="datalist-type" enterkeyhint="done">
-                            <datalist id="${key}List">
-                                ${optionsHtml}
-                            </datalist>
-                        </div>`;
-                        //console.log(optionsHtml);
-                    }
-                    if (config.type === "photo"){
-                        formInnerHtml += `
-                        <div class="form-group">
-                            <label for="${key}">${config.text}</label><br/>
-                            <input
-                                type="file"
-                                id="${key}"
-                                accept="image/png,image/jpeg,image/webp"/><br/>
-                        </div>\n`;
-
-                    }
-                });
-                formInnerHtml += `
-                <div class="modal-buttons">
-                    <button type="button" id="cancelAddEditBtn" class="btn-cancel">Cancel</button>
-                    <button type="submit" class="btn-save">Save</button>
-                </div>`;
-
-                wishlistForm.innerHTML = "";
-                wishlistForm.innerHTML = formInnerHtml;
-                //console.log(formInnerHtml);
-                // Cancel Add/Edit
-                //cancelAddEditBtn.addEventListener('click', () => hideModal(addEditModal));
-            } */
-
             // Function to populate datalist elements from a Firestore document
             async function populateMenuOptions() {
                 try {
@@ -1302,11 +1240,13 @@
                      */
                     return keywordObjs.every(({ word, endsWithSpace }) => {
                         // Regex to detect numeric comparison query like ">550" or "<600"
-                        const numericMatch = word.match(/^([<>])(\d+)$/);
+                        // const numericMatch = word.match(/^([<>])(\d+)$/); //Old Code v_3.0
+                        const numericMatch = word.match(/^([<>])(\d+(\.\d+)?)$/);
                         
                         if (numericMatch) {
                             const operator = numericMatch[1];
                             const numValue = Number(numericMatch[2]);
+                            // console.log ("Query Value: " + numValue); //For Debugging
                             
                             // Check numeric fields for any matching number by operator
                             /* return Object.keys(dataMap).some(key => {
@@ -1332,6 +1272,7 @@
                                     // Check if any extracted number satisfies the condition
                                     return matches.some(numStr => {
                                         const fieldVal = parseFloat(numStr);
+                                        // console.log(fieldVal); //For Debugging
                                         if (operator === '>' && fieldVal > numValue) {
                                             /* console.log(`*********\n data[key]= ${rawVal}\n Match= ${fieldVal}\n*********\n`); //For Debugging */
                                             return true;
